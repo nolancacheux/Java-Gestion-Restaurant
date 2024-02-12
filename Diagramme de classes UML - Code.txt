@@ -1,0 +1,239 @@
+@startuml
+class Restaurant {
+    - nom: String
+    - adresse: String
+    - capacite: int
+    - stock: Stock
+    - carte: Menu
+    - employes: List<Employe>
+    - horaires: Map<Employe, List<Shift>>
+    + ouvrirRestaurant(): void
+    + fermerRestaurant(): void
+    + imprimerRapportJournalier(): String
+    + ajouterShift(Employe, Shift): void
+    + afficherInformationsRestaurant(Restaurant): void
+    + nettoyerRestaurant(Restaurant): void
+    
+}
+
+class Employe {
+    - nom: String
+    - prenom: String
+    - salaire: double
+    - contrat: Contrat
+    - shifts: List<Shift>
+    + enregistrerHeuresTravail(Shift): void
+    + initialiserEmployes(): List<Employe>
+    + formatEmploye(Employe): String
+    + EmployesParDefaut(): List<Employe>
+    + selectionnerEmployes(Scanner, List<Employe>): List<Employe>
+    + verifierPersonnelMinimum(List<Employe>): boolean
+    + ajouterEmploye(Scanner, Restaurant): void
+    + supprimerEmploye(Scanner, Restaurant): void
+    + afficherEmployes(Restaurant): void
+    + trouverEmploye(String, Restaurant): Employe
+}
+
+class Serveur extends Employe {
+    - tablesAssignees: List<Table>
+    + accueillirClient(Client, int): void
+    + choisirServeur(Scanner, Restaurant): Serveur
+    + prendreCommande(Scanner, Commande, Restaurant): void
+    + ajouterPlatCommande(Scanner, Commande, Restaurant): void
+    + ajouterBoissonCommande(Scanner, Commande, Restaurant): void
+    + prendreCommande(): Commande
+}
+
+class Cuisinier extends Employe {
+    - estOccupe: boolean
+    - commandeEnCours: Commande
+    + preparerPlat(Commande): void
+    + estOccupe(): boolean
+}
+
+class Barman extends Employe {
+    - estOccupe: boolean
+    - commandeEnCours: Commande
+    + preparerBoisson(Commande): void
+    + estOccupe(): boolean
+    
+}
+
+
+class Manager {
+    +void prevoirEmployes()
+    +void reconstituerStock(Stock stock)
+    +String imprimerListeCourses(Stock stock)
+    +String surveillerPerformance(List<Transaction> transactions)
+}
+
+class Etudiant extends Employe {}
+
+class Gestion {
+    + gérerPriseDeCommande(Scanner, Restaurant): void
+    + gérerEcranCuisine(Scanner, Restaurant): void
+    + gérerEcranBar(Scanner, Restaurant): void
+    + gérerEcranMonitoring(Scanner, Restaurant): void
+    + gérerGestionEmployés(Scanner, Restaurant): void
+    + gérerGestionStock(Scanner, Restaurant): void
+    + gérerPlanificationEmployés(Scanner, Restaurant): void
+    + gererAddition(Scanner, Restaurant): void
+}
+
+class Stock {
+    - inventaire: Map<Object, Integer>
+    + initialiserStock(): Stock
+    + ajouterAuStock(Object, int): void
+    + verifierDisponibilite(Object): boolean
+    + diminuerStock(Commande, Restaurant): void
+    + reduireStock(Object, int): void
+    + afficherInventaire(Restaurant): void
+    + ajouterStockAlimentExistant(Scanner, Restaurant): void
+}
+
+class Menu {
+    - plats: List<Plat>
+    - boissons: List<Boisson>
+    + initialiserMenu(): Menu
+    + ajouterPlat(Plat): void
+    + ajouterBoisson(Boisson): void
+    + afficherPlats(): void
+    + afficherBoissons(): void
+    + trouverPlatParNom(String): Plat
+    + trouverBoissonParNom(String): Boisson
+}
+
+class Plat {
+    - nom: String
+    - prix: double
+    - quantite: int
+    - ingredients: List<Aliment>
+    + estDisponible(): boolean
+    + formatPlat(Plat): String
+
+}
+
+class Boisson {
+    - nom: String
+    - prix: double
+    - quantite: int
+    + estDisponible(): boolean
+    + formatBoisson(Boisson): String
+    + toString(): String
+}
+
+class Aliment {
+    - nom: String
+    - quantite: int
+    + creerNouvelAliment(Scanner, Restaurant): void
+    + supprimerAliment(Scanner, Restaurant): void
+    + formatAliment(Map.Entry<Object, Integer>): String
+    + equals(Object): boolean
+    + hashCode(): int
+    + toString(): String
+}
+
+class Client {
+    - nombre: int
+    - souhaits: String
+}
+
+class Contrat {
+    - type: String
+    - debut: Date
+    - fin: Date
+    + estValide(Date): boolean
+    + prolongerContrat(Date): void
+    + terminerContrat(): void
+    + toString(): String
+}
+
+class Shift {
+    - heureDebut: Date
+    - heureFin: Date
+    - employe: Employe
+}
+
+class Horaires {
+    - horaireEmployes: Map<Employe, List<Shift>>
+    + ajouterShift(Scanner, Restaurant): void
+    + voirShifts(Scanner, Restaurant): void
+    + planifierEmployes(Employe, Shift): void
+    + verifierDisponibilite(Employe, Date): boolean
+}
+
+class Table {
+    - numero: int
+    - capacite: int
+    - serveurAssigne: Serveur
+    - estOccupee: boolean
+    - commande: Commande
+    + trouverTableParNumero(int, Restaurant): Table
+}
+
+class Transaction {
+- table: Table
+- serveur: Serveur
+- commande: Commande
+- facture: Facture
++ initierTransaction(Client): void
++ effectuerPaiement(double): void
++ terminerTransaction(): void
++ calculerTotal(): double
++ enregistrerFacture(): void
+}
+
+class Commande {
+- plats: List<Plat>
+- boissons: List<Boisson>
+- total: double
+- estPrete: boolean
+- estPretePlats: boolean
+- estPreteBoissons: boolean
+- enPreparation: boolean
+- montantPaye: double
++ effectuerPaiement(double): void
++ estEntierementPayee(): boolean
++ marquerCommePrete(): void
++ estPretee(): boolean
++ resumerCommande(): String
++ calculerTotal(): double
++ ajouterPlat(Plat): void
++ ajouterBoisson(Boisson): void
++ getServeur(Restaurant restaurant) : Serveur
+}
+
+class Facture {
+- serveurNom :String
+- tableNumero : int
+- total : double
+- plats : List<String> 
+- boissons : List<String> 
+- montantPaye: double 
+- dateFacture : Date
++ générerFacture(): String
+}
+
+Restaurant *-- "1" Stock
+Restaurant *-- "1" Menu
+Restaurant o-- "*" Employe
+Restaurant o-- "1" Horaires
+Restaurant o-- "*" Table
+Restaurant o-- "*" Transaction
+Serveur "1" -- "*" Table : assigné à
+Cuisinier "1" -- "*" Commande : prépare
+Barman "1" -- "*" Commande : prépare
+Manager "1" -- "*" Transaction : gère
+Etudiant "1" -- "*" Transaction : participe à
+Table "1" -- "0..1" Commande
+Table "1" -- "0..1" Transaction : impliquée dans
+Commande "1" -- "*" Plat : contient
+Commande "1" -- "*" Boisson : contient
+Stock o-- "*" Aliment : stocke
+Horaires "1" -- "*" Shift : planifie
+Menu "1" -- "*" Plat : inclut
+Menu "1" -- "*" Boisson : inclut
+Plat "1" -- "*" Aliment : composé de
+Transaction "1" -- "0..1" Facture : génère
+Facture "1" -- "0..1" Transaction : associée à
+@enduml
